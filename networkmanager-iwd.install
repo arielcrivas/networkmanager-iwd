@@ -1,0 +1,32 @@
+_post_install_message() {
+    cat <<- EOF
+
+    >>> It's recommended to enable iwd service if you haven't done yet:
+
+      # systemctl enable iwd.service
+
+EOF
+}
+
+_post_uninstall_message() {
+    cat <<- EOF
+
+    >>> Do not forget to disable iwd service if you don't need it anymore:
+
+      # systemctl disable iwd.service
+
+    >>> If you are replacing upstream networkmanager, do not forget to
+    >>> install libnm and nm-cloud-setup also:
+
+      # pacman -Syu networkmanager libnm nm-cloud-setup
+
+EOF
+}
+
+post_install() {
+    _post_install_message
+}
+
+post_remove() {
+    _post_uninstall_message
+}
