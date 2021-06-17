@@ -6,14 +6,14 @@ _NM_CLOUD_SETUP=0
 pkgbase=networkmanager-iwd
 pkgname=('networkmanager-iwd' 'libnm-iwd')
 (( $_NM_CLOUD_SETUP )) && pkgname+=('nm-iwd-cloud-setup')
-pkgver=1.30.4
+pkgver=1.32.0
 pkgrel=1
 pkgdesc='NM modified package to use exclusively iwd backend getting rid of wpa_supplicant dependency'
 epoch=2
 url='https://wiki.gnome.org/Projects/NetworkManager'
 arch=('x86_64')
 license=('GPL2' 'LGPL2.1')
-_pppver=2.4.8
+_pppver=2.4.9
 makedepends=('audit' 'bluez-libs' 'curl' 'dhclient' 'dnsmasq' 'git' 'glib2-docs'
              'gobject-introspection' 'gtk-doc' 'intltool' 'iproute2' 'iptables'
              'iwd' 'jansson' 'libmm-glib' 'libndp' 'libnewt' 'libpsl' 'libteam'
@@ -22,7 +22,7 @@ makedepends=('audit' 'bluez-libs' 'curl' 'dhclient' 'dnsmasq' 'git' 'glib2-docs'
 
 (( $_CHECK )) && checkdepends=('libx11' 'python-dbus')
 
-_commit=a3e45da9f984d58e3b76d6ca064033541d819eca   # tags/1.30.4
+_commit=d9c0d43879e8420dda6482b05341dcfeedf7be43   # tags/1.32.0
 source=("git+https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git#commit=$_commit")
 sha256sums=('SKIP')
 
@@ -113,7 +113,7 @@ package_networkmanager-iwd() {
            'libnewt' 'libnm-iwd' 'libpsl' 'libteam'
            'mobile-broadband-provider-info' 'polkit')
   provides=('networkmanager')
-  conflicts=('networkmanager' 'wpa_supplicant')
+  conflicts=('networkmanager')
   optdepends=('dnsmasq: connection sharing'
               'bluez: Bluetooth support'
               'ppp: dialup connection support'
