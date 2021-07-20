@@ -3,10 +3,10 @@
 _CHECK=0
 _NM_CLOUD_SETUP=0
 
-pkgbase=networkmanager-iwd
+pkgbase='networkmanager-iwd'
 pkgname=('networkmanager-iwd' 'libnm-iwd')
 (( $_NM_CLOUD_SETUP )) && pkgname+=('nm-iwd-cloud-setup')
-pkgver=1.32.2
+pkgver=1.32.4
 pkgrel=1
 pkgdesc='NM modified package to use exclusively iwd backend getting rid of wpa_supplicant dependency'
 epoch=2
@@ -22,7 +22,7 @@ makedepends=('audit' 'bluez-libs' 'curl' 'dhclient' 'dnsmasq' 'git' 'glib2-docs'
 
 (( $_CHECK )) && checkdepends=('libx11' 'python-dbus')
 
-_commit=bf1b09702ed442a3efe426c8ceba4ef1e6bb1902   # tags/1.32.2^0
+_commit='02ade05ddf91658cf949c14a233c2ab91e281c29'   # tags/1.32.4^0
 source=("git+https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git#commit=$_commit")
 sha256sums=('SKIP')
 
