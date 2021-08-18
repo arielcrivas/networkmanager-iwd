@@ -1,0 +1,32 @@
+#!/bin/zsh
+
+zmodload zsh/datetime
+
+buffer=$(git ls-remote --tags 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git')
+
+tag=$(sed 's|^.*refs/tags/||g' <<< "$buffer" | \
+  sed -r -e '/^[0-9]/!d' -e '/-(dev|rc|alpha|beta|stable|unstable)/d' | \
+  sort --version-sort | tail -1)
+
+commit=$(awk '/'${(q)tag}'$/ {print $1}' <<< "$buffer")
+pkgver=${tag%^*}
+pppver=${$(LC_ALL=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}')%%-*}
+
+setconf PKGBUILD pkgver $pkgver
+setconf PKGBUILD _commit=${commit}"   # tags/${tag}"
+setconf PKGBUILD _pppver=${pppver}
+
+mkpkg --verifysource -f
+mkpkg --srcinfo
+
+if mkpkg -sicfr --noconfirm; then
+  git add PKGBUILD .SRCINFO
+  mtime=$EPOCHSECONDS
+  (( mtime % 2 )) && (( mtime-- ))
+  git commit --date=$(strftime '%Y-%m-%dT%H:%M:%S' $mtime) -m 'Build version '"$pkgver"
+  git push -u origin main
+fi
+
+exit $status
+
+# vim: ft=zsh ts=2 sts=2 sw=2 et:
