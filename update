@@ -2,7 +2,7 @@
 
 zmodload zsh/datetime
 
-buffer=$(git ls-remote --tags 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git')
+buffer=$(git ls-remote 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git' 'refs/tags/*')
 
 tag=$(sed 's|^.*refs/tags/||g' <<< "$buffer" | \
   sed -r -e '/^[0-9]/!d' -e '/-(dev|rc|alpha|beta|stable|unstable)/d' | \
