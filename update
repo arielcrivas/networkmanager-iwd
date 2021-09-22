@@ -1,19 +1,16 @@
-#!/bin/zsh
-
-zmodload zsh/datetime
+#!/bin/bash
 
 buffer=$(git ls-remote 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git' 'refs/tags/*')
 
-tag=$(sed 's|^.*refs/tags/||g' <<< "$buffer" | \
-  sed -r -e '/^[0-9]/!d' -e '/-(dev|rc|alpha|beta|stable|unstable)/d' | \
+pkgver=$(sed 's|^.*refs/tags/||g' <<< "$buffer" | \
+  sed -r -e '/^[0-9]/!d' -e '/-(dev|rc|alpha|beta|stable|unstable)/d' -e '/[0-9]*$/!d' | \
   sort --version-sort | tail -1)
 
-commit=$(awk '/'${(q)tag}'$/ {print $1}' <<< "$buffer")
-pkgver=${tag%^*}
-pppver=${$(LC_ALL=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}')%%-*}
+commit=$(awk '($2 ~ /'${pkgver}'\^\{\}$/) {print $1}' <<< "$buffer")
+pppver=$(LC_MESSAGES=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}' | sed 's/-[0-9]*$//')
 
 setconf PKGBUILD pkgver $pkgver
-setconf PKGBUILD _commit=${commit}"   # tags/${tag}"
+setconf PKGBUILD _commit=${commit}"   # tags/${pkgver}^{}"
 setconf PKGBUILD _pppver=${pppver}
 
 mkpkg --verifysource -f
@@ -21,12 +18,12 @@ mkpkg --srcinfo
 
 if mkpkg -sicfr --noconfirm; then
   git add PKGBUILD .SRCINFO
-  mtime=$EPOCHSECONDS
+  mtime=$(date +%s)
   (( mtime % 2 )) && (( mtime-- ))
-  git commit --date=$(strftime '%Y-%m-%dT%H:%M:%S' $mtime) -m 'Build version '"$pkgver"
-  git push -u origin main
+  git commit --date=$(date -d @$mtime +%Y-%m-%dT%H:%M:%S) -m 'Build version '${pkgver}
+  git push -u origin $(git rev-parse --abbrev-ref HEAD)
 fi
 
-exit $status
+exit $?
 
-# vim: ft=zsh ts=2 sts=2 sw=2 et:
+# vim: ft=sh ts=2 sts=2 sw=2 et:
