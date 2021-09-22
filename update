@@ -16,12 +16,16 @@ setconf PKGBUILD _pppver=${pppver}
 mkpkg --verifysource -f
 mkpkg --srcinfo
 
+branch=$(git rev-parse --abbrev-ref HEAD)
+
 if mkpkg -sicfr --noconfirm; then
   git add PKGBUILD .SRCINFO
   mtime=$(date +%s)
   (( mtime % 2 )) && (( mtime-- ))
   git commit --date=$(date -d @$mtime +%Y-%m-%dT%H:%M:%S) -m 'Build version '${pkgver}
-  git push -u origin $(git rev-parse --abbrev-ref HEAD)
+  git push -u origin $branch
+  git tag --annotate -m ${pkgver} v${pkgver}
+  git push --tags -q -u origin $branch
 fi
 
 exit $?
