@@ -1,13 +1,28 @@
 #!/bin/bash
 
-buffer=$(git ls-remote 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git' 'refs/tags/*')
+pkgname='networkmanager-iwd'
 
-pkgver=$(sed 's|^.*refs/tags/||g' <<< "$buffer" | \
-  sed -r -e '/^[0-9]/!d' -e '/-(dev|rc|alpha|beta|stable|unstable)/d' -e '/[0-9]*$/!d' | \
-  sort --version-sort | tail -1)
+echo 'Getting version information...' >&2
+
+version=$(pacman -Q | awk '/'${pkgname}'/ {print $2}')
+[[ $version =~ ^[0-9]+: ]] && version=${version##*:}
+[[ $version =~ -[0-9]+$ ]] && version=${version%%-*}
+
+buffer=$(git ls-remote 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git' 'refs/tags/*')
+pkgver=$(sed -r -e 's|^.*refs/tags/||' \
+  -e '/^[0-9]+\.[0-9]+\.[0-9]+\^/!d' \
+  -e 's|\^.*||g' <<< "$buffer" | sort --version-sort | tail -1)
+
+if [[ $version == $pkgver ]]; then
+  echo 'Package is already updated!' >&2
+  exit 0
+fi
 
 commit=$(awk '($2 ~ /'${pkgver}'\^\{\}$/) {print $1}' <<< "$buffer")
 pppver=$(LC_MESSAGES=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}' | sed 's/-[0-9]*$//')
+
+#printf 'version: %s\ncommit : %s\npppver : %s\n' $pkgver $commit $pppver >&2
+#exit 0
 
 setconf PKGBUILD pkgver $pkgver
 setconf PKGBUILD _commit=${commit}"   # tags/${pkgver}^{}"
