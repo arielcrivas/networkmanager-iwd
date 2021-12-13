@@ -4,9 +4,7 @@ pkgname='networkmanager-iwd'
 
 echo 'Getting version information...' >&2
 
-version=$(pacman -Q | awk '/'${pkgname}'/ {print $2}')
-[[ $version =~ ^[0-9]+: ]] && version=${version##*:}
-[[ $version =~ -[0-9]+$ ]] && version=${version%%-*}
+version=$(pkg-query -c -f '%v' $pkgname)
 
 buffer=$(git ls-remote 'https://gitlab.freedesktop.org/NetworkManager/NetworkManager.git' 'refs/tags/*')
 pkgver=$(sed -r -e 's|^.*refs/tags/||' \
@@ -19,7 +17,8 @@ if [[ $version == $pkgver ]]; then
 fi
 
 commit=$(awk '($2 ~ /'${pkgver}'\^\{\}$/) {print $1}' <<< "$buffer")
-pppver=$(LC_MESSAGES=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}' | sed 's/-[0-9]*$//')
+#pppver=$(LC_MESSAGES=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}' | sed 's/-[0-9]*$//')
+pppver=$(pkg-query -c -1 --sync-db -f '%v' ppp)
 
 #printf 'version: %s\ncommit : %s\npppver : %s\n' $pkgver $commit $pppver >&2
 #exit 0
