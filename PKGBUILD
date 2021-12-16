@@ -7,7 +7,7 @@ pkgbase='networkmanager-iwd'
 pkgname=('networkmanager-iwd' 'libnm-iwd')
 (( $_NM_CLOUD_SETUP )) && pkgname+=('nm-iwd-cloud-setup')
 pkgver=1.32.12
-pkgrel=1
+pkgrel=2
 pkgdesc='NM modified package to use exclusively iwd backend getting rid of wpa_supplicant dependency'
 epoch=2
 url='https://wiki.gnome.org/Projects/NetworkManager'
@@ -17,8 +17,8 @@ _pppver=2.4.9
 makedepends=('audit' 'bluez-libs' 'curl' 'dhclient' 'dnsmasq' 'git' 'glib2-docs'
              'gobject-introspection' 'gtk-doc' 'intltool' 'iproute2' 'iptables'
              'iwd' 'jansson' 'libmm-glib' 'libndp' 'libnewt' 'libpsl' 'libteam'
-             'meson' 'modemmanager' 'nss' 'openresolv' 'perl-yaml' 'polkit'
-             "ppp=$_pppver" 'python-gobject' 'systemd' 'vala' 'wpa_supplicant')
+             'meson' 'modemmanager' 'nss' 'openresolv' 'perl-yaml' "ppp=$_pppver"
+             'python-gobject' 'systemd' 'vala' 'wpa_supplicant')
 
 (( $_CHECK )) && checkdepends=('libx11' 'python-dbus')
 
@@ -45,7 +45,6 @@ build() {
     -D session_tracking_consolekit=false
     -D suspend_resume=systemd
     -D modify_system=true
-    -D polkit_agent_helper_1=/usr/lib/polkit-1
     -D selinux=false
 
     # features
@@ -111,11 +110,12 @@ _pick() {
 package_networkmanager-iwd() {
   depends=('audit' 'bluez-libs' 'curl' 'iproute2' 'iwd' 'libmm-glib' 'libndp'
            'libnewt' 'libnm-iwd' 'libpsl' 'libteam'
-           'mobile-broadband-provider-info' 'polkit')
+           'mobile-broadband-provider-info')
   provides=('networkmanager')
   conflicts=('networkmanager')
   optdepends=('dnsmasq: connection sharing'
               'bluez: Bluetooth support'
+              'polkit: let non-root users control networking'
               'ppp: dialup connection support'
               'modemmanager: cellular network support'
               'dhclient: alternative DHCP client'

@@ -1,7 +1,7 @@
 pkgbase = networkmanager-iwd
 	pkgdesc = NM modified package to use exclusively iwd backend getting rid of wpa_supplicant dependency
 	pkgver = 1.32.12
-	pkgrel = 1
+	pkgrel = 2
 	epoch = 2
 	url = https://wiki.gnome.org/Projects/NetworkManager
 	arch = x86_64
@@ -31,7 +31,6 @@ pkgbase = networkmanager-iwd
 	makedepends = nss
 	makedepends = openresolv
 	makedepends = perl-yaml
-	makedepends = polkit
 	makedepends = ppp=2.4.9
 	makedepends = python-gobject
 	makedepends = systemd
@@ -55,9 +54,9 @@ pkgname = networkmanager-iwd
 	depends = libpsl
 	depends = libteam
 	depends = mobile-broadband-provider-info
-	depends = polkit
 	optdepends = dnsmasq: connection sharing
 	optdepends = bluez: Bluetooth support
+	optdepends = polkit: let non-root users control networking
 	optdepends = ppp: dialup connection support
 	optdepends = modemmanager: cellular network support
 	optdepends = dhclient: alternative DHCP client
