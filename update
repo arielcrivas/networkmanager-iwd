@@ -24,6 +24,7 @@ pppver=$(pkg-query -c -1 --sync-db -f '%v' ppp)
 #exit 0
 
 setconf PKGBUILD pkgver $pkgver
+setconf PKGBUILD pkgrel 1
 setconf PKGBUILD _commit=${commit}"   # tags/${pkgver}^{}"
 setconf PKGBUILD _pppver=${pppver}
 
