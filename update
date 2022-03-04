@@ -1,8 +1,11 @@
-#!/bin/bash
+#!/bin/zsh
+
+source "$LIBDIR"/io.zsh
+zmodload zsh/datetime
 
 pkgname='networkmanager-iwd'
 
-echo 'Getting version information...' >&2
+msg 'Getting version information...'
 
 version=$(pkg-query -c -f '%v' $pkgname)
 
@@ -12,32 +15,32 @@ pkgver=$(sed -r -e 's|^.*refs/tags/||' \
   -e 's|\^.*||g' <<< "$buffer" | sort --version-sort | tail -1)
 
 if [[ $pkgver ]] && [[ $version == $pkgver ]]; then
-  echo 'Package is already updated!' >&2
+  msg 'Package `%s` is already updated!' $pkgname
   exit 0
 fi
 
 commit=$(awk '($2 ~ /'${pkgver}'\^\{\}$/) {print $1}' <<< "$buffer")
-#pppver=$(LC_MESSAGES=C pacman -Si ppp | awk -F ' *: *' '/^Version/ {print $2}' | sed 's/-[0-9]*$//')
 pppver=$(pkg-query -c -1 --sync-db -f '%v' ppp)
 
 #printf 'version: %s\ncommit : %s\npppver : %s\n' $pkgver $commit $pppver >&2
 #exit 0
 
 setconf PKGBUILD pkgver $pkgver
-setconf PKGBUILD pkgrel 1
+(( $(sed -e '/^pkgrel/!d' -e 's/^pkgrel=//' PKGBUILD) > 1 )) && \
+  setconf PKGBUILD pkgrel 1
 setconf PKGBUILD _commit=${commit}"   # tags/${pkgver}^{}"
 setconf PKGBUILD _pppver=${pppver}
 
 mkpkg --verifysource -f
 mkpkg --srcinfo
+mkpkg -sicfr --noconfirm || exit $status
 
-branch=$(git rev-parse --abbrev-ref HEAD)
-
-if mkpkg -sicfr --noconfirm; then
+if [[ $(git rev-parse --is-inside-work-tree &>/dev/null) == true ]]; then
+  branch=$(git rev-parse --abbrev-ref HEAD)
   git add PKGBUILD .SRCINFO
-  mtime=$(date +%s)
+  mtime=$EPOCHSECONDS
   (( mtime % 2 )) && (( mtime-- ))
-  git commit --date=$(date -d @$mtime +%Y-%m-%dT%H:%M:%S) -m 'Build version '${pkgver}
+  git commit --date=$(strftime %Y-%m-%dT%H:%M:%S $mtime) -m 'Build version '${pkgver}
   git push -u origin $branch
   git tag --annotate -m ${pkgver} v${pkgver}
   git push --tags -q -u origin $branch
@@ -45,4 +48,4 @@ fi
 
 exit $?
 
-# vim: ft=sh ts=2 sts=2 sw=2 et:
+# vim: ft=zsh ts=2 sts=2 sw=2 et:
