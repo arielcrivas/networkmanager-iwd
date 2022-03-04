@@ -35,7 +35,7 @@ mkpkg --verifysource -f
 mkpkg --srcinfo
 mkpkg -sicfr --noconfirm || exit $status
 
-if [[ $(git rev-parse --is-inside-work-tree &>/dev/null) == true ]]; then
+if [[ $(git rev-parse --is-inside-work-tree 2>/dev/null) == true ]]; then
   branch=$(git rev-parse --abbrev-ref HEAD)
   git add PKGBUILD .SRCINFO
   mtime=$EPOCHSECONDS
@@ -44,8 +44,10 @@ if [[ $(git rev-parse --is-inside-work-tree &>/dev/null) == true ]]; then
   git push -u origin $branch
   git tag --annotate -m ${pkgver} v${pkgver}
   git push --tags -q -u origin $branch
+else
+  :
 fi
 
-exit $?
+exit $status
 
 # vim: ft=zsh ts=2 sts=2 sw=2 et:
