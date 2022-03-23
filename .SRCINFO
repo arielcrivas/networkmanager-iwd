@@ -31,7 +31,6 @@ pkgbase = networkmanager-iwd
 	makedepends = nss
 	makedepends = openresolv
 	makedepends = perl-yaml
-	makedepends = ppp=2.4.9
 	makedepends = python-gobject
 	makedepends = systemd
 	makedepends = vala
@@ -57,7 +56,6 @@ pkgname = networkmanager-iwd
 	optdepends = dnsmasq: connection sharing
 	optdepends = bluez: Bluetooth support
 	optdepends = polkit: let non-root users control networking
-	optdepends = ppp: dialup connection support
 	optdepends = modemmanager: cellular network support
 	optdepends = dhclient: alternative DHCP client
 	optdepends = openresolv: alternative resolv.conf manager

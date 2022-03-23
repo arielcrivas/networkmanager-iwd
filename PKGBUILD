@@ -13,11 +13,10 @@ epoch=2
 url='https://wiki.gnome.org/Projects/NetworkManager'
 arch=('x86_64')
 license=('GPL2' 'LGPL2.1')
-_pppver=2.4.9
 makedepends=('audit' 'bluez-libs' 'curl' 'dhclient' 'dnsmasq' 'git' 'glib2-docs'
              'gobject-introspection' 'gtk-doc' 'intltool' 'iproute2' 'iptables'
              'iwd' 'jansson' 'libmm-glib' 'libndp' 'libnewt' 'libpsl' 'libteam'
-             'meson' 'modemmanager' 'nss' 'openresolv' 'perl-yaml' "ppp=$_pppver"
+             'meson' 'modemmanager' 'nss' 'openresolv' 'perl-yaml'
              'python-gobject' 'systemd' 'vala' 'wpa_supplicant')
 
 (( $_CHECK )) && checkdepends=('libx11' 'python-dbus')
@@ -41,7 +40,7 @@ build() {
     -D dbus_conf_dir=/usr/share/dbus-1/system.d
 
     # platform
-    -D dist_version="$pkgver-$pkgrel"
+    -D dist_version="$pkgver"
     -D session_tracking_consolekit=false
     -D suspend_resume=systemd
     -D modify_system=true
@@ -49,7 +48,7 @@ build() {
 
     # features
     -D iwd=true
-    -D pppd_plugin_dir=/usr/lib/pppd/$_pppver
+    -D ppp=false
     -D teamdctl=true
     -D bluez5_dun=true
     -D ebpf=true
@@ -116,7 +115,6 @@ package_networkmanager-iwd() {
   optdepends=('dnsmasq: connection sharing'
               'bluez: Bluetooth support'
               'polkit: let non-root users control networking'
-              'ppp: dialup connection support'
               'modemmanager: cellular network support'
               'dhclient: alternative DHCP client'
               'openresolv: alternative resolv.conf manager')

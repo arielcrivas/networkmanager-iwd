@@ -20,16 +20,14 @@ if [[ $pkgver ]] && [[ $version == $pkgver ]]; then
 fi
 
 commit=$(awk '($2 ~ /'${pkgver}'\^\{\}$/) {print $1}' <<< "$buffer")
-pppver=$(pkg-query -c -1 --sync-db -f '%v' ppp)
 
-#printf 'version: %s\ncommit : %s\npppver : %s\n' $pkgver $commit $pppver >&2
+#printf 'version: %s\ncommit : %s\n' $pkgver $commit >&2
 #exit 0
 
 setconf PKGBUILD pkgver $pkgver
 (( $(sed -e '/^pkgrel/!d' -e 's/^pkgrel=//' PKGBUILD) > 1 )) && \
   setconf PKGBUILD pkgrel 1
 setconf PKGBUILD _commit=${commit}"   # tags/${pkgver}^{}"
-setconf PKGBUILD _pppver=${pppver}
 
 mkpkg --verifysource -f
 mkpkg --srcinfo
