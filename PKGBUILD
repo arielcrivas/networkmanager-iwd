@@ -190,4 +190,4 @@ package_nm-iwd-cloud-setup() {
   mv nm-cloud-setup/* "$pkgdir"
 }
 
-# vim: ft=sh syn=sh ts=2 sts=2 sw=2 et:
+# vim: ft=sh ts=2 sts=2 sw=2 et:
